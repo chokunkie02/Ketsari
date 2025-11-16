@@ -23,6 +23,9 @@
             margin: 0;
             padding: 0; 
             box-sizing: border-box;
+            overflow-x: hidden; /* ป้องกันการเลื่อนซ้ายขวา */
+            width: 100vw;
+            max-width: 100%;
         }
 
         /* --- กรอบวิดีโอแนวตั้ง (ด้านซ้าย) --- */
@@ -68,6 +71,8 @@
             padding: 0 1rem;
             box-sizing: border-box;
             justify-content: center;
+            width: 100%;
+            overflow-x: hidden;
         }
 
         /* --- กรอบกล่องด้านขวา (เปลี่ยนเป็นแนวนอน) --- */
@@ -92,8 +97,10 @@
                 align-items: flex-start;
                 justify-content: center;
                 width: 100%;
+                max-width: 100vw;
                 padding: 1rem;
                 box-sizing: border-box;
+                overflow-x: hidden;
             }
             
             .mobile-right {
@@ -511,6 +518,7 @@
         @media (max-width: 768px) {
             .text-content-wrapper {
                 grid-template-columns: repeat(3, 1fr);
+                padding-bottom: 8rem; /* เพิ่มจาก 6rem เป็น 8rem สำหรับมือถือ */
             }
             
             .main-layout {
@@ -593,6 +601,7 @@
             }
             .text-content-wrapper {
                 grid-template-columns: repeat(2, 1fr);
+                padding-bottom: 10rem; /* เพิ่มพื้นที่ด้านล่างมากขึ้นสำหรับมือถือเล็ก */
             }
             .main-layout {
                 flex-direction: column;
