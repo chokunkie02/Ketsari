@@ -26,6 +26,40 @@
             overflow-x: hidden; /* ป้องกันการเลื่อนซ้ายขวา */
             width: 100vw;
             max-width: 100%;
+            opacity: 0; /* เริ่มต้นด้วยการซ่อน */
+            animation: fadeInPage 1.5s ease-in-out forwards; /* เอฟเฟกต์เฟดเข้า */
+        }
+        
+        /* เอฟเฟกต์เฟดเข้า */
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Overlay สำหรับการเปลี่ยนหน้า */
+        #transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 9999;
+            pointer-events: none;
+            transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out;
+        }
+        
+        #transition-overlay.visible {
+            opacity: 1;
+            visibility: visible;
         }
 
         /* --- กรอบวิดีโอแนวตั้ง (ด้านซ้าย) --- */
@@ -635,6 +669,9 @@
 </head>
 <body>
 
+    <!-- Transition Overlay -->
+    <div id="transition-overlay"></div>
+
     <div class="main-layout">
         <div class="video-container">
             <div class="video-responsive-wrapper">
@@ -836,7 +873,14 @@
 
         // Function for Next button
         function goToNext() {
-            window.location.href = 'thought.html';
+            const overlay = document.getElementById('transition-overlay');
+            if (overlay) {
+                overlay.classList.add('visible');
+            }
+            
+            setTimeout(() => {
+                window.location.href = 'thought.html';
+            }, 1500); // รอ 1.5 วินาทีให้เอฟเฟกต์เสร็จก่อน
         }
 
         window.addEventListener('scroll', handleScrollAnimation);
