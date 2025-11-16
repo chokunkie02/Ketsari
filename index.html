@@ -468,7 +468,7 @@
                     handleBlowCandle();
                 } else if (interactionState === 'go_next') {
                     fadeOutMusic(); // Start fading out music in background
-                    transitionTo('start'); // Immediately transition without waiting
+                    transitionTo('gate'); // ไปหน้าใส่รหัสก่อน
                 }
             });
 
@@ -560,7 +560,7 @@
             function handlePinConfirm() {
                 const enteredPin = Array.from(pinInputs).map(input => input.value).join('');
                 if (enteredPin === CONFIG.correctPin) {
-                    transitionTo('countdown');
+                    window.location.href = 'envelope.html'; // ไปหน้า envelope
                 } else {
                     pinContainer.classList.add('shake');
                     pinInputs.forEach(input => input.value = '');
