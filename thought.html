@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เทมเพลตซองจดหมาย - ความคิด</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* --- Color Scheme (Same as envelope.html) --- */
+            --bg-color: #F8F6FF;
+            --primary-text: #8B5DFF;
+            --darker-text: #6A3ED4;
+            --primary-accent: #B794F6;
+            --envelope-light: #E6D8FF;
+            --envelope-dark: #9B6BFF;
+            --letter-text: #2D3748;
+            --letter-title: #1A202C;
+            --letter-signature: #553C9A;
+        }
+        
+        body {
+            font-family: 'Kanit', sans-serif;
+            overflow: hidden;
+            background-color: var(--bg-color);
+        }
+        
+        /* --- Transitions (Same as envelope.html) --- */
+        #transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.8s ease-in-out;
+        }
+        .view {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .view.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* --- Thought View Styles --- */
+        #thought-view {
+            background-color: #F8F6FF;
+            position: relative;
+        }
+
+        /* Typewriter effect */
+        .typewriter {
+            /* overflow: hidden; */ 
+            /* white-space: nowrap; */ 
+            border-right: 3px solid var(--primary-text);
+            
+            animation: blink-caret 0.75s step-end infinite;
+            
+            max-width: 100%;
+            text-align: center; 
+            
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+        .typewriter.no-caret {
+            border-right: none;
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--primary-text); }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.6;
+            font-size: 12px;
+            animation: float-particle 8s linear infinite;
+        }
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Heart particles */
+        .heart-particle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 16px;
+            color: #FF69B4; /* <--- แก้เป็นแบบนี้ครับ */
+            animation: float-heart 3s ease-out forwards;
+        }
+        @keyframes float-heart {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        /* Thought text animations */
+        #thought-text {
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            text-shadow: 1px 1px 3px rgba(139, 93, 255, 0.1);
+            font-family: 'Kanit', sans-serif;
+            font-weight: 400;
+        }
+        .fade-in-thought {
+            animation: fade-in-up 1.2s ease-out forwards;
+        }
+        .fade-out-thought {
+            animation: fade-out-down 0.8s ease-in forwards;
+        }
+        @keyframes fade-in-up {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fade-out-down {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+        }
+
+        /* Breathing effect for special thoughts */
+        .breathing {
+            animation: breathe 3s ease-in-out infinite;
+        }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Soft glow effect */
+        .soft-glow {
+            text-shadow: 0 0 20px rgba(139, 93, 255, 0.3), 
+                         0 0 40px rgba(139, 93, 255, 0.2),
+                         1px 1px 3px rgba(139, 93, 255, 0.1);
+        }
+
+        /* === โค้ดสำหรับมือถือ === */
+        @media (max-width: 600px) {
+            .max-w-4xl.px-8,
+            .w-full.px-8 { /* */
+                padding-left: 1.25rem;
+                padding-right: 1.25rem;
+            }
+        }
+        /* === สิ้นสุดส่วนที่เพิ่ม === */
+
+    </style>
+</head>
+<body style="background-color: #F8F6FF;">
+
+    <div id="transition-overlay"></div>
+
+    <div id="thought-view" class="view relative overflow-hidden" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; width: 100vw;">
+        <div id="particles-container" class="absolute inset-0 pointer-events-none">
+            </div>
+        
+        <div class="text-center w-full px-8 relative z-10" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <div id="thought-text" class="font-medium leading-relaxed" style="color: var(--primary-text); min-height: 1.5em; font-size: clamp(1.5rem, 5vw, 2.5rem); letter-spacing: 0.05em;">
+                </div>
+            
+            <button id="continue-button" class="text-white font-bold py-3 px-6 rounded-full transition duration-300 shadow-lg opacity-0 pointer-events-none" style="background-color: var(--primary-text); transform: scale(0.8); margin-top: 2rem;" onmouseover="this.style.backgroundColor='var(--darker-text)'" onmouseout="this.style.backgroundColor='var(--primary-text)'">
+                กลับสู่หน้าแรก
+            </button>
+        </div>
+        
+        <div id="heart-container" class="absolute inset-0 pointer-events-none">
+            </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const transitionOverlay = document.getElementById('transition-overlay');
+        
+        // Thought View Elements
+        const thoughtView = document.getElementById('thought-view');
+        const thoughtText = document.getElementById('thought-text');
+        const continueButton = document.getElementById('continue-button');
+        const particlesContainer = document.getElementById('particles-container');
+        const heartContainer = document.getElementById('heart-container');
+        
+        let currentThought = 0;
+        let isThinking = false;
+        let typewriterTimeout;
+
+        // Thought content - the inner thoughts after reading the letter
+        const thoughtMessages = [
+            "หลังจากอ่านจดหมายนี้แล้ว... ฉันรู้สึกอย่างไร",
+            "คำพูดของเขาทำให้ฉันนึกถึงความทรงจำดีๆ",
+            "บางทีความรู้สึกนี้มันจะคงอยู่ไปนานแค่ไหน",
+            "ฉันอยากจะตอบกลับเขาบ้างไหมนะ...",
+            "แต่จะเขียนอะไรดี ให้ฟังดูไม่แปลกๆ",
+            "เอาเป็นว่า... เก็บความรู้สึกนี้ไว้ในใจก่อนละกัน"
+        ];
+        
+        // --- Thought View Functions ---
+        
+        // Create floating particles
+        function createParticle() {
+            const particles = ['✨', '💫', '⭐', '🌟', '💜', '💙', '🤍'];
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.textContent = particles[Math.floor(Math.random() * particles.length)];
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            particle.style.animationDuration = (8 + Math.random() * 4) + 's';
+            
+            particlesContainer.appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 12000);
+        }
+
+        // Create heart particles for special moments
+        function createHeartParticle(x, y) {
+            const hearts = ['💜', '💖', '💕', '💗'];
+            const heart = document.createElement('div');
+            heart.className = 'heart-particle';
+            heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+            heart.style.left = (x || Math.random() * 100) + '%';
+            heart.style.top = (y || 80) + '%';
+            
+            heartContainer.appendChild(heart);
+            
+            setTimeout(() => {
+                if (heart.parentNode) {
+                    heart.parentNode.removeChild(heart);
+                }
+            }, 3000);
+        }
+
+        // Typewriter effect for thoughts
+        function typewriterEffect(text, element, callback) {
+            element.textContent = '';
+            element.classList.add('typewriter');
+            
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    typewriterTimeout = setTimeout(type, 60 + Math.random() * 40);
+                } else {
+                    element.classList.add('no-caret');
+                    if (callback) callback();
+                }
+            }
+            type();
+        }
+
+        // Display current thought
+        function displayThought(index) {
+            if (index >= thoughtMessages.length) {
+                // All thoughts displayed, show continue button
+                continueButton.style.opacity = '1';
+                continueButton.style.transform = 'scale(1)';
+                continueButton.style.pointerEvents = 'auto';
+                return;
+            }
+
+            const message = thoughtMessages[index];
+            
+            if (typewriterTimeout) {
+                clearTimeout(typewriterTimeout);
+            }
+            
+            thoughtText.classList.add('fade-in-thought');
+            
+            if (index === 1 || index === 3) {
+                setTimeout(() => {
+                    thoughtText.classList.add('breathing');
+                }, 1000);
+                
+                setTimeout(() => {
+                    for (let i = 0; i < 3; i++) {
+                        setTimeout(() => {
+                            // createHeartParticle(30 + Math.random() * 40, 60 + Math.random() * 20); // (โค้ดอิโมจิหัวใจ ปิดไว้อยู่)
+                        }, i * 500);
+                    }
+                }, 1500);
+            }
+            
+            if (index === thoughtMessages.length - 1) {
+                setTimeout(() => {
+                    thoughtText.classList.add('soft-glow');
+                }, 1000);
+            }
+            
+            setTimeout(() => {
+                typewriterEffect(message, thoughtText, () => {
+                    if (index < thoughtMessages.length - 1) {
+                        setTimeout(() => {
+                            autoNextThought();
+                        }, 1400);
+                    } else {
+                        setTimeout(() => {
+                            continueButton.style.opacity = '1';
+                            continueButton.style.transform = 'scale(1)';
+                            continueButton.style.pointerEvents = 'auto';
+                        }, 1000);
+                    }
+                });
+            }, 500);
+        }
+
+        // Auto advance to next thought
+        function autoNextThought() {
+            if (currentThought < thoughtMessages.length - 1) {
+                thoughtText.classList.remove('fade-in-thought', 'breathing', 'soft-glow', 'typewriter', 'no-caret');
+                thoughtText.classList.add('fade-out-thought');
+                
+                setTimeout(() => {
+                    thoughtText.classList.remove('fade-out-thought');
+                    currentThought++;
+                    displayThought(currentThought);
+                }, 800);
+            }
+        }
+
+        // Initialize thought view
+        function initializeThoughts() {
+            currentThought = 0;
+            thoughtText.classList.remove('fade-in-thought', 'fade-out-thought', 'breathing', 'soft-glow', 'typewriter', 'no-caret');
+            thoughtText.textContent = '';
+            
+            continueButton.style.opacity = '0';
+            continueButton.style.transform = 'scale(0.8)';
+            continueButton.style.pointerEvents = 'none';
+            
+            const particleInterval = setInterval(() => {
+                if (!document.getElementById('thought-view')) {
+                    clearInterval(particleInterval);
+                    return;
+                }
+                // createParticle(); // (โค้ดอิโมจิลอย ปิดไว้อยู่)
+            }, 1500);
+            
+            setTimeout(() => {
+                displayThought(0);
+            }, 1000);
+        }
+
+        /**
+         * Function to handle transitions that redirect to another page
+         * @param {string} url - The URL to redirect to
+         */
+        function transitionToView(url) {
+            transitionOverlay.style.opacity = '1';
+            setTimeout(() => {
+                window.location.href = url;
+            }, 800);
+        }
+        
+        // Return to start screen from thoughts
+        function returnToStart() {
+            isThinking = false;
+            if (typewriterTimeout) {
+                clearTimeout(typewriterTimeout);
+            }
+            
+            transitionToView('envelope.html');
+        }
+
+        // --- Event Listeners ---
+
+        continueButton.addEventListener('click', () => {
+            returnToStart();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!isThinking) return;
+            
+            if (e.code === 'Escape') {
+                e.preventDefault();
+                returnToStart();
+            }
+        });
+
+        window.addEventListener('load', () => {
+            transitionOverlay.style.opacity = '1';
+            
+            initializeThoughts();
+            isThinking = true;
+
+            setTimeout(() => {
+                transitionOverlay.style.opacity = '0';
+            }, 100); 
+        });
+    </script>
+
+</body>
+</html>

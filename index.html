@@ -139,11 +139,11 @@
         @keyframes rise-2 { 100% { top: 16px; } }
         .candle { background: repeating-linear-gradient( 45deg, var(--cake-dark) 0, var(--cake-dark) 4px, var(--cake-light) 4px, var(--cake-light) 8px ); height: 27px; width: 9px; position: absolute; margin: auto; left: 0; right: 0; bottom: 0; animation: rise-3 1s 4s forwards; }
         @keyframes rise-3 { 100% { bottom: 121px; } }
-        .candle:after { content: ""; position: absolute; height: 10px; width: 10px; background-color: #ffee54; border-radius: 0 50% 50% 50%; transform: scale(0) rotate(45deg); bottom: 30px; left: -0.5px; animation: flame 1.5s 5s forwards; transition: all 0.3s ease-out; }
+        .candle:after { content: ""; position: absolute; height: 10px; width: 10px; background-color: #ffee54; border-radius: 0 50% 50% 50%; transform: scale(0) rotate(45deg); bottom: 30px; left: -0.5px; animation: flame 1.5s 5s forwards; transition: all 1.2s ease-out; }
         @keyframes flame { 100% { transform: scale(1) rotate(45deg); } }
         .candle.blown-out:after { transform: scale(0) rotate(45deg) !important; opacity: 0; }
         .candle:before { content: ""; position: absolute; width: 6px; height: 11px; background: var(--primary-accent); border-radius: 50%; opacity: 0; filter: blur(3px); bottom: 34px; left: 50%; transform: translateX(-50%); }
-        .candle.blown-out:before { animation: smokePuff 1.5s ease-out forwards; }
+        .candle.blown-out:before { animation: smokePuff 2.5s ease-out forwards; }
         @keyframes smokePuff { 0% { opacity: 0.6; transform: translateX(-50%) translateY(0) scale(0.5); } 100% { opacity: 0; transform: translateX(-50%) translateY(-30px) scale(1.5); } }
         .action-button { font-size: clamp(1rem, 2.5vw, 1.2rem); font-weight: 500; color: white; margin-top: 1rem; position: relative; display: inline-block; background: var(--primary-text); border: 3px solid var(--primary-text); border-radius: 50px; padding: 10px 20px; cursor: pointer; box-shadow: 0 8px 25px rgba(139, 93, 255, 0.4); opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.8s ease; }
         .action-button.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
@@ -652,7 +652,7 @@
                     this.x = x; 
                     this.y = window.innerHeight * 0.85; // Start at 15% from bottom
                     this.targetY = window.innerHeight * 0.3 + Math.random() * (window.innerHeight * 0.1);
-                    this.speed = 6;
+                    this.speed = 2;
                 }
                 update() {
                     this.y -= this.speed;
@@ -670,13 +670,13 @@
             class Particle {
                 constructor(x, y) {
                     this.x = x; this.y = y;
-                    this.vx = (Math.random() - 0.5) * 4;
-                    this.vy = (Math.random() - 0.5) * 4;
-                    this.life = 35;
-                    this.maxLife = 35;
+                    this.vx = (Math.random() - 0.5) * 2.5;
+                    this.vy = (Math.random() - 0.5) * 2.5;
+                    this.life = 80;
+                    this.maxLife = 80;
                     this.size = 2;
-                    this.gravity = 0.03;
-                    this.friction = 0.995;
+                    this.gravity = 0.02;
+                    this.friction = 0.98;
                 }
                 update() {
                     this.vx *= this.friction; this.vy *= this.friction;
@@ -697,16 +697,16 @@
                 constructor() {
                     this.x = Math.random() * window.innerWidth;
                     this.y = -10;
-                    this.vx = (Math.random() - 0.5) * 2;
-                    this.vy = Math.random() * 2 + 1;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = Math.random() * 0.3 + 0.2;
                     this.rotation = Math.random() * 360;
-                    this.rotationSpeed = (Math.random() - 0.5) * 10;
+                    this.rotationSpeed = (Math.random() - 0.5) * 5;
                     this.size = Math.random() * 8 + 4;
                     this.colors = ['#8B5DFF', '#B794F6', '#E6D8FF', '#9B6BFF', '#FFD700', '#FF69B4'];
                     this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
-                    this.life = 100;
-                    this.gravity = 0.1;
-                    this.friction = 0.99;
+                    this.life = 180;
+                    this.gravity = 0.015;
+                    this.friction = 0.995;
                 }
                 
                 update() {

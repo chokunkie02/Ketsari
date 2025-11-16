@@ -10,22 +10,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* --- Color Scheme matching choompoo.html --- */
-            --bg-color: #F8F6FF;         /* พื้นหลังหลัก */
-            --primary-text: #8B5DFF;     /* ข้อความหลัก */
-            --darker-text: #6A3ED4;      /* ข้อความเข้ม */
-            --primary-accent: #B794F6;   /* สีเน้น */
-            --envelope-light: #E6D8FF;   /* สีซองอ่อน */
-            --envelope-dark: #9B6BFF;    /* สีซองเข้ม */
-            --letter-text: #2D3748;      /* สีข้อความในจดหมาย (เทาเข้ม) */
-            --letter-title: #1A202C;     /* สีหัวข้อในจดหมาย (เทาเข้มมาก) */
-            --letter-signature: #553C9A; /* สีลายเซ็น (ม่วงเข้ม) */
+            /* --- Color Scheme --- */
+            --bg-color: #F8F6FF;
+            --primary-text: #8B5DFF;
+            --darker-text: #6A3ED4;
+            --primary-accent: #B794F6;
+            --envelope-light: #E6D8FF;
+            --envelope-dark: #9B6BFF;
+            --letter-text: #2D3748;
+            --letter-title: #1A202C;
+            --letter-signature: #553C9A;
         }
         
         body {
             font-family: 'Kanit', sans-serif;
             overflow: hidden;
-            background-color: #F8F6FF;
+            background-color: var(--bg-color);
         }
         
         /* --- Transitions --- */
@@ -240,15 +240,12 @@
         .letter-sliding-out {
             animation: letter-slide-out 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
-
         .letter-expanding {
             animation: letter-expand-center 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
-
         .letter-shrinking {
             animation: letter-shrink-back 1s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
         }
-
         .letter-sliding-in {
             animation: letter-slide-in 1.2s cubic-bezier(0.8, 0, 0.6, 1) forwards;
         }
@@ -259,16 +256,13 @@
             transform: translateY(20px);
             transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
-
         .letter-part.visible {
             opacity: 1;
             transform: translateY(0);
         }
-
         .letter-part.scroll-up {
             animation: scroll-up 0.8s ease-out forwards;
         }
-
         @keyframes scroll-up {
             0% {
                 opacity: 1;
@@ -285,137 +279,57 @@
             transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
         }
-
-        /* --- Thought View Styles --- */
-        #thought-view {
-            background-color: #F8F6FF;
-            position: relative;
-        }
-
-        /* Typewriter effect */
-        .typewriter {
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 3px solid var(--primary-text);
-            animation: typing 3s steps(50, end), blink-caret 0.75s step-end infinite;
-            max-width: 100%;
-            text-align: center;
-        }
-
-        .typewriter.no-caret {
-            border-right: none;
-        }
-
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: var(--primary-text); }
-        }
-
-        /* Floating particles */
-        .particle {
-            position: absolute;
-            pointer-events: none;
-            opacity: 0.6;
-            font-size: 12px;
-            animation: float-particle 8s linear infinite;
-        }
-
-        @keyframes float-particle {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
+        /* === เพิ่มส่วนนี้ต่อท้ายใน <style> === */
+        
+        @media (max-width: 600px) { 
+            
+            /* * 1. ปรับ Keyframe ของจดหมายตอนขยาย
+             * ให้เต็มหน้าจอมือถือ
+             */
+            @keyframes letter-expand-center {
+                0% { 
+                    transform: translateY(-200px) scale(0.85);
+                    opacity: 1;
+                }
+                100% { 
+                    /* --- นี่คือจุดที่แก้ --- */
+                    transform: translate(-50%, -50%) scale(1.0); /* เปลี่ยน scale เป็น 1 */
+                    left: 50%;
+                    top: 50%;     /* จัดกลางจอ */
+                    width: 95vw;  /* กว้าง 95% ของความกว้างจอ */
+                    height: 80vh; /* สูง 80% ของความสูงจอ */
+                    z-index: 10;
+                    opacity: 1;
+                }
             }
-            10% {
-                opacity: 0.6;
-            }
-            90% {
-                opacity: 0.6;
-            }
-            100% {
-                transform: translateY(-100px) rotate(360deg);
-                opacity: 0;
+
+            /* * 2. ปรับ Keyframe ตอนหดกลับ
+             * ให้เริ่มจากขนาดที่เต็มจอ (ตามที่แก้ด้านบน)
+             */
+            @keyframes letter-shrink-back {
+                0% { 
+                    /* --- นี่คือจุดที่แก้ --- */
+                    transform: translate(-50%, -50%) scale(1.0);
+                    left: 50%;
+                    top: 50%;
+                    width: 95vw;
+                    height: 80vh;
+                    z-index: 10;
+                    opacity: 1;
+                }
+                100% { 
+                    /* กลับไปที่ค่าเดิม (ซึ่งซ่อนในซอง) */
+                    transform: translateY(-200px) scale(0.85);
+                    left: 20px;
+                    top: 15px;
+                    width: 260px;
+                    height: 180px;
+                    z-index: 4;
+                    opacity: 1;
+                }
             }
         }
-
-        /* Heart particles */
-        .heart-particle {
-            position: absolute;
-            pointer-events: none;
-            font-size: 16px;
-            color: #FF69B4;
-            animation: float-heart 3s ease-out forwards;
-        }
-
-        @keyframes float-heart {
-            0% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-200px) scale(0.3);
-                opacity: 0;
-            }
-        }
-
-        /* Thought text animations */
-        #thought-text {
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-            text-shadow: 1px 1px 3px rgba(139, 93, 255, 0.1);
-            font-family: 'Kanit', sans-serif;
-            font-weight: 400;
-        }
-
-        .fade-in-thought {
-            animation: fade-in-up 1.2s ease-out forwards;
-        }
-
-        .fade-out-thought {
-            animation: fade-out-down 0.8s ease-in forwards;
-        }
-
-        @keyframes fade-in-up {
-            0% {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fade-out-down {
-            0% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-        }
-
-        /* Breathing effect for special thoughts */
-        .breathing {
-            animation: breathe 3s ease-in-out infinite;
-        }
-
-        @keyframes breathe {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        /* Soft glow effect */
-        .soft-glow {
-            text-shadow: 0 0 20px rgba(139, 93, 255, 0.3), 
-                         0 0 40px rgba(139, 93, 255, 0.2),
-                         1px 1px 3px rgba(139, 93, 255, 0.1);
-        }
+        /* === สิ้นสุดส่วนที่เพิ่ม === */
 
     </style>
 </head>
@@ -423,19 +337,16 @@
 
     <div id="transition-overlay"></div>
 
-    <!-- Pop-up Message -->
     <div id="popup-message" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-2xl font-semibold opacity-0 pointer-events-none z-50 transform scale-90" style="color: var(--primary-text); text-shadow: 2px 2px 8px rgba(139, 93, 255, 0.5);">
         <span>ปิดจดหมายแล้ว</span>
     </div>
 
-    <!-- Start Screen -->
     <div id="start-screen" class="view text-center">
         <button id="start-button" class="font-bold py-3 px-8 rounded-full text-lg shadow-lg text-white transition-transform transition-shadow duration-200" style="background-color: var(--primary-text);" onmouseover="this.style.backgroundColor='var(--darker-text)'" onmouseout="this.style.backgroundColor='var(--primary-text)'">
             เริ่มเลย!
         </button>
     </div>
 
-    <!-- Envelope View -->
     <div id="envelope-view" class="view hidden text-center flex-col items-center justify-center">
         <div class="envelope-wrapper">
             <div id="envelope" class="envelope">
@@ -444,7 +355,6 @@
                 <div class="flap bottom-flap"></div>
                 <div class="flap front-panel"></div>
                 
-                <!-- Letter inside envelope -->
                 <div id="letter-inside" class="letter-inside">
                     <div class="text-center">
                         <h1 class="text-2xl font-bold mb-3 tracking-tight" style="color: var(--letter-title);">
@@ -452,8 +362,7 @@
                         </h1>
                     </div>
                     <div class="text-left mt-3" id="letter-content">
-                        <!-- Content will be dynamically inserted here -->
-                    </div>
+                        </div>
                     <div class="text-center mt-auto pt-3 absolute bottom-4 left-0 right-0">
                         <button id="close-button" class="mt-4 text-white font-bold py-2 px-4 rounded-full transition duration-300 shadow-md" style="background-color: var(--primary-text);" onmouseover="this.style.backgroundColor='var(--darker-text)'" onmouseout="this.style.backgroundColor='var(--primary-text)'">
                             ปิดจดหมาย
@@ -470,31 +379,6 @@
         </p>
     </div>
 
-    <!-- Thought View -->
-    <div id="thought-view" class="view hidden relative overflow-hidden" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; width: 100vw;">
-        <!-- Floating particles background -->
-        <div id="particles-container" class="absolute inset-0 pointer-events-none">
-            <!-- Particles will be generated here -->
-        </div>
-        
-        <!-- Main thought content -->
-        <div class="text-center max-w-4xl px-8 relative z-10" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-            <div id="thought-text" class="font-medium leading-relaxed" style="color: var(--primary-text); min-height: 1.5em; font-size: clamp(1.5rem, 5vw, 2.5rem); letter-spacing: 0.05em;">
-                <!-- Thought text will appear here -->
-            </div>
-            
-            <!-- Continue button (hidden initially) -->
-            <button id="continue-button" class="text-white font-bold py-3 px-6 rounded-full transition duration-300 shadow-lg opacity-0 pointer-events-none" style="background-color: var(--primary-text); transform: scale(0.8); margin-top: 2rem;" onmouseover="this.style.backgroundColor='var(--darker-text)'" onmouseout="this.style.backgroundColor='var(--primary-text)'">
-                กลับสู่หน้าแรก
-            </button>
-        </div>
-        
-        <!-- Heart particles for special moments -->
-        <div id="heart-container" class="absolute inset-0 pointer-events-none">
-            <!-- Hearts will be generated here -->
-        </div>
-    </div>
-
     <script>
         // DOM Elements
         const transitionOverlay = document.getElementById('transition-overlay');
@@ -508,23 +392,12 @@
         const popupMessage = document.getElementById('popup-message');
         const letterContent = document.getElementById('letter-content');
         
-        // Thought View Elements
-        const thoughtView = document.getElementById('thought-view');
-        const thoughtText = document.getElementById('thought-text');
-        const thoughtIndicator = document.getElementById('thought-indicator');
-        const continueButton = document.getElementById('continue-button');
-        const particlesContainer = document.getElementById('particles-container');
-        const heartContainer = document.getElementById('heart-container');
-        
+        const allViews = document.querySelectorAll('.view');
+
         let isOpened = false;
         let isAnimating = false;
         let currentPart = 0;
         let letterParts = [];
-        let currentThought = 0;
-        let thoughtParts = [];
-        let isThinking = false;
-        let typewriterTimeout;
-        const allViews = document.querySelectorAll('.view');
 
         // Letter content - split into parts for long text
         const fullLetterText = `[เขียนข้อความของคุณที่นี่...]ดกเ
@@ -553,15 +426,6 @@ fsdfsdfsdามารถจัดการกับข้อความยา�
 โดยการเลื่อนข้อความขึ้นไปแบบราบรื่น
 และแสดงส่วนที่สองต่อจากส่วนแรกอย่างไม่มีการขาดตอน`;
 
-        // Thought content - the inner thoughts after reading the letter
-        const thoughtMessages = [
-            "หลังจากอ่านจดหมายนี้แล้ว... ฉันรู้สึกอย่างไร",
-            "คำพูดของเขาทำให้ฉันนึกถึงความทรงจำดีๆ",
-            "บางทีความรู้สึกนี้มันจะคงอยู่ไปนานแค่ไหน",
-            "ฉันอยากจะตอบกลับเขาบ้างไหมนะ...",
-            "แต่จะเขียนอะไรดี ให้ฟังดูไม่แปลกๆ",
-            "เอาเป็นว่า... เก็บความรู้สึกนี้ไว้ในใจก่อนละกัน"
-        ];
 
         // Function to split text into parts
         function splitTextIntoParts(text, maxLength = 400) {
@@ -679,28 +543,39 @@ fsdfsdfsdามารถจัดการกับข้อความยา�
             }
         }
 
-        // Function to handle view transitions with fade-to-black
-        function transitionToView(viewToShow) {
+        /**
+         * Function to handle view transitions
+         * @param {HTMLElement} viewToShow - The view element to show
+         * @param {boolean} [isRedirect=false] - Whether this transition is a page redirect
+         * @param {string} [url=''] - The URL to redirect to
+         */
+        function transitionToView(viewToShow, isRedirect = false, url = '') {
             transitionOverlay.style.opacity = '1';
 
             setTimeout(() => {
-                allViews.forEach(view => view.classList.add('hidden'));
-                viewToShow.classList.remove('hidden');
+                if (isRedirect) {
+                    // If it's a redirect, just change the window location
+                    window.location.href = url;
+                } else {
+                    // If it's an internal view switch
+                    allViews.forEach(view => view.classList.add('hidden'));
+                    viewToShow.classList.remove('hidden');
 
-                // Reset envelope to initial state if returning to start
-                if (viewToShow === startScreen) {
-                    envelope.classList.remove('open');
-                    letterInside.className = 'letter-inside';
-                    letterInside.style.cssText = '';
-                    isOpened = false;
-                    isAnimating = false;
-                    currentPart = 0;
-                    letterContent.innerHTML = '';
-                    instruction.style.opacity = '1';
-                    closeButton.textContent = 'ปิดจดหมาย'; // Reset button text
+                    // Reset envelope to initial state if returning to start
+                    if (viewToShow === startScreen) {
+                        envelope.classList.remove('open');
+                        letterInside.className = 'letter-inside';
+                        letterInside.style.cssText = '';
+                        isOpened = false;
+                        isAnimating = false;
+                        currentPart = 0;
+                        letterContent.innerHTML = '';
+                        instruction.style.opacity = '1';
+                        closeButton.textContent = 'ปิดจดหมาย'; // Reset button text
+                    }
+                    
+                    transitionOverlay.style.opacity = '0';
                 }
-
-                transitionOverlay.style.opacity = '0';
             }, 800); 
         }
 
@@ -710,234 +585,33 @@ fsdfsdfsdามารถจัดการกับข้อความยา�
             currentPart = 0;
         }
 
-        // --- Thought View Functions ---
-        
-        // Create floating particles
-        function createParticle() {
-            const particles = ['✨', '💫', '⭐', '🌟', '💜', '💙', '🤍'];
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.textContent = particles[Math.floor(Math.random() * particles.length)];
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 8 + 's';
-            particle.style.animationDuration = (8 + Math.random() * 4) + 's';
-            
-            particlesContainer.appendChild(particle);
-            
-            // Remove particle after animation
-            setTimeout(() => {
-                if (particle.parentNode) {
-                    particle.parentNode.removeChild(particle);
-                }
-            }, 12000);
-        }
-
-        // Create heart particles for special moments
-        function createHeartParticle(x, y) {
-            const hearts = ['💜', '💖', '💕', '💗'];
-            const heart = document.createElement('div');
-            heart.className = 'heart-particle';
-            heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-            heart.style.left = (x || Math.random() * 100) + '%';
-            heart.style.top = (y || 80) + '%';
-            
-            heartContainer.appendChild(heart);
-            
-            // Remove heart after animation
-            setTimeout(() => {
-                if (heart.parentNode) {
-                    heart.parentNode.removeChild(heart);
-                }
-            }, 3000);
-        }
-
-        // Typewriter effect for thoughts
-        function typewriterEffect(text, element, callback) {
-            element.textContent = '';
-            element.classList.add('typewriter');
-            
-            let i = 0;
-            function type() {
-                if (i < text.length) {
-                    element.textContent += text.charAt(i);
-                    i++;
-                    typewriterTimeout = setTimeout(type, 60 + Math.random() * 40);
-                } else {
-                    element.classList.add('no-caret');
-                    if (callback) callback();
-                }
-            }
-            type();
-        }
-
-        // Display current thought
-        function displayThought(index) {
-            if (index >= thoughtMessages.length) {
-                // All thoughts displayed, show continue button
-                continueButton.style.opacity = '1';
-                continueButton.style.transform = 'scale(1)';
-                continueButton.style.pointerEvents = 'auto';
-                return;
-            }
-
-            const message = thoughtMessages[index];
-            
-            // Clear previous animations
-            if (typewriterTimeout) {
-                clearTimeout(typewriterTimeout);
-            }
-            
-            // Add fade-in animation (without zoom)
-            thoughtText.classList.add('fade-in-thought');
-            
-            // Special effects for certain thoughts
-            if (index === 1 || index === 3) {
-                // Add breathing effect for emotional thoughts
-                setTimeout(() => {
-                    thoughtText.classList.add('breathing');
-                }, 1000);
-                
-                // Create heart particles
-                setTimeout(() => {
-                    for (let i = 0; i < 3; i++) {
-                        setTimeout(() => {
-                            createHeartParticle(30 + Math.random() * 40, 60 + Math.random() * 20);
-                        }, i * 500);
-                    }
-                }, 1500);
-            }
-            
-            if (index === thoughtMessages.length - 1) {
-                // Last thought gets soft glow and show button
-                setTimeout(() => {
-                    thoughtText.classList.add('soft-glow');
-                }, 1000);
-            }
-            
-            // Start typewriter effect
-            setTimeout(() => {
-                typewriterEffect(message, thoughtText, () => {
-                    // Auto advance after 1.4 seconds for all messages except the last one
-                    if (index < thoughtMessages.length - 1) {
-                        setTimeout(() => {
-                            autoNextThought();
-                        }, 1400);
-                    } else {
-                        // Show continue button only after the last message
-                        setTimeout(() => {
-                            continueButton.style.opacity = '1';
-                            continueButton.style.transform = 'scale(1)';
-                            continueButton.style.pointerEvents = 'auto';
-                        }, 1000);
-                    }
-                });
-            }, 500);
-        }
-
-        // Auto advance to next thought (without user interaction)
-        function autoNextThought() {
-            if (currentThought < thoughtMessages.length - 1) {
-                // Clear classes for transition
-                thoughtText.classList.remove('fade-in-thought', 'breathing', 'soft-glow', 'typewriter', 'no-caret');
-                thoughtText.classList.add('fade-out-thought');
-                
-                setTimeout(() => {
-                    thoughtText.classList.remove('fade-out-thought');
-                    currentThought++;
-                    displayThought(currentThought);
-                }, 800);
-            }
-        }
-
-        // Move to next thought
-        function nextThought() {
-            if (currentThought < thoughtMessages.length - 1) {
-                // Clear classes for transition
-                thoughtText.classList.remove('fade-in-thought', 'breathing', 'soft-glow', 'typewriter', 'no-caret');
-                thoughtText.classList.add('fade-out-thought');
-                
-                setTimeout(() => {
-                    thoughtText.classList.remove('fade-out-thought');
-                    currentThought++;
-                    displayThought(currentThought);
-                }, 800);
-            } else if (currentThought >= thoughtMessages.length - 1) {
-                // Return to start screen
-                returnToStart();
-            }
-        }
-
-        // Initialize thought view
-        function initializeThoughts() {
-            currentThought = 0;
-            thoughtText.classList.remove('fade-in-thought', 'fade-out-thought', 'breathing', 'soft-glow', 'typewriter', 'no-caret');
-            thoughtText.textContent = '';
-            
-            // Hide continue button initially
-            continueButton.style.opacity = '0';
-            continueButton.style.transform = 'scale(0.8)';
-            continueButton.style.pointerEvents = 'none';
-            
-            // Start particles animation
-            const particleInterval = setInterval(() => {
-                if (document.getElementById('thought-view').classList.contains('hidden')) {
-                    clearInterval(particleInterval);
-                    return;
-                }
-                createParticle();
-            }, 1500);
-            
-            // Display first thought
-            setTimeout(() => {
-                displayThought(0);
-            }, 1000);
-        }
-
-        // Return to start screen from thoughts
-        function returnToStart() {
-            isThinking = false;
-            if (typewriterTimeout) {
-                clearTimeout(typewriterTimeout);
-            }
-            
-            transitionToView(startScreen);
-        }
-
         // --- Event Listeners ---
 
         startButton.addEventListener('click', () => {
             transitionToView(envelopeView);
         });
         
-        // Modified: New letter sliding animation
         envelope.addEventListener('click', () => {
             if (isOpened || isAnimating) return;
             isAnimating = true;
 
-            // Step 1: Open envelope flap
             envelope.classList.add('open');
             instruction.style.opacity = '0';
 
-            // Step 2: Wait for flap animation to complete, then change z-index and slide letter out
             setTimeout(() => {
-                // Change z-index right before letter slides out
                 document.querySelector('.top-flap').style.zIndex = '1';
                 
-                // Small delay to ensure z-index change takes effect
                 setTimeout(() => {
                     letterInside.classList.add('letter-sliding-out');
                     
                     setTimeout(() => {
-                        // Step 3: Expand letter to center
                         letterInside.classList.remove('letter-sliding-out');
                         letterInside.classList.add('letter-expanding');
                         
                         setTimeout(() => {
                             isOpened = true;
                             isAnimating = false;
-                            // Initialize and display first part of letter
                             displayLetterPart(0);
-                            // Update button text
                             updateButtonText();
                         }, 1000);
                     }, 1200);
@@ -945,63 +619,36 @@ fsdfsdfsdามารถจัดการกับข้อความยา�
             }, 800);
         });
 
-        // Modified: Dynamic button functionality (next page or close)
         closeButton.addEventListener('click', () => {
             if (!isOpened || isAnimating) return;
 
-            // Check if there are more parts to show
             if (letterParts.length > 1 && currentPart < letterParts.length - 1) {
-                // Show next part
                 animateToNextPart();
                 updateButtonText();
             } else {
+                // ** MODIFICATION HERE **
                 // Close letter and go to thought view
                 isAnimating = true;
 
-                // Step 1: Shrink letter back to envelope position
                 letterInside.classList.remove('letter-expanding');
                 letterInside.classList.add('letter-shrinking');
 
                 setTimeout(() => {
-                    // Step 2: Slide letter back into envelope
                     letterInside.classList.remove('letter-shrinking');
                     letterInside.classList.add('letter-sliding-in');
 
                     setTimeout(() => {
-                        // Step 3: Close envelope flap and reset z-index
                         envelope.classList.remove('open');
                         document.querySelector('.top-flap').style.zIndex = '5';
                         
                         setTimeout(() => {
-                            // Step 4: Transition to thought view instead of start screen
-                            transitionToView(thoughtView);
-                            
-                            // Initialize thoughts after transition
-                            setTimeout(() => {
-                                initializeThoughts();
-                                isThinking = true;
-                            }, 800);
+                            // ** MODIFICATION HERE **
+                            // Transition to the new 'thought.html' page
+                            transitionToView(null, true, 'thought.html');
 
                         }, 800);
                     }, 1200);
                 }, 1000);
-            }
-        });
-
-        // --- Thought View Event Listeners ---
-
-        // Continue button to return to start (only button that works now)
-        continueButton.addEventListener('click', () => {
-            returnToStart();
-        });
-
-        // Keep escape key to return to start
-        document.addEventListener('keydown', (e) => {
-            if (!isThinking) return;
-            
-            if (e.code === 'Escape') {
-                e.preventDefault();
-                returnToStart();
             }
         });
 
