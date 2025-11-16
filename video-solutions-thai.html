@@ -234,7 +234,7 @@
         
         .sound-reminder-right {
             color: #8B5DFF;
-            font-size: 4rem;
+            font-size: 2.5rem; /* ลดจาก 4rem เป็น 2.5rem */
             font-weight: 600;
             text-align: center;
             animation: pulse 2s infinite;
@@ -242,6 +242,7 @@
             margin-top: 90px;
             grid-column: 1 / -1;
             width: 100%;
+            line-height: 1.3; /* เพิ่มเพื่อให้ข้อความหลายบรรทัดไม่ชิดกัน */
         }
         
         @media (min-width: 769px) {
@@ -277,7 +278,7 @@
             max-width: 1200px; 
             margin: 0 auto; 
             padding: 1rem;
-            padding-bottom: 3rem; 
+            padding-bottom: 6rem; /* เพิ่มจาก 3rem เป็น 6rem เพื่อให้การ์ดแสดงผลครบ */ 
             box-sizing: border-box;
             display: grid;
             grid-template-columns: repeat(4, 1fr); 
@@ -634,7 +635,8 @@
                 </video>
             </div>
             <div class="sound-reminder">
-                อย่าลืมเปิดเสียงนะ
+                อย่าลืมเปิดเสียงนะ<br>
+                เลื่อนลงไปดูข้างล่างได้น้าา
             </div>
         </div>
 
@@ -654,7 +656,8 @@
             </div>
             
             <div class="sound-reminder-right">
-                อย่าลืมเปิดเสียงนะ
+                อย่าลืมเปิดเสียงนะ<br>
+                เลื่อนลงไปดูข้างล่างได้น้าา
             </div>
         </div>
     </div>
@@ -668,7 +671,8 @@
                 </video>
             </div>
             <div class="sound-reminder">
-                อย่าลืมเปิดเสียงนะ
+                อย่าลืมเปิดเสียงนะ<br>
+                เลื่อนลงไปดูข้างล่างได้น้าา
             </div>
         </div>
 
