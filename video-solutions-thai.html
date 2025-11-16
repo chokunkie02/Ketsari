@@ -28,11 +28,8 @@
         /* --- กรอบวิดีโอแนวตั้ง (ด้านซ้าย) --- */
         .video-container {
             width: 100%;
-            
-            /* (ปรับปรุง) ลดขนาดลง */
             max-width: 220px; 
-            
-            margin: 2rem 0; /* จัดด้านซ้าย */
+            margin: 2rem 0;
             padding: 0 1rem;
             box-sizing: border-box;
         }
@@ -44,7 +41,7 @@
             }
             
             .video-responsive-wrapper {
-                padding-bottom: 100% !important; /* เปลี่ยนเป็นสี่เหลี่ยมจตุรัส */
+                padding-bottom: 100% !important; 
                 height: 300px;
                 width: 300px;
             }
@@ -194,6 +191,14 @@
             opacity: 0;
         }
 
+        /* --- สไตล์สำหรับรูปภาพ *ภายใน* กล่อง --- */
+        .content-image {
+            max-width: 80%;  
+            max-height: 80%;
+            height: auto;
+            border-radius: 0.5rem; 
+        }
+
         /* --- กรอบ iframe อัตราส่วน 9:16 --- */
         .video-responsive-wrapper {
             position: relative;
@@ -216,7 +221,7 @@
             object-fit: cover;
         }
 
-        /* --- ข้อความแจ้งเตือนเปิดเสียงด้านล่างวิดีโอ --- */
+        /* --- ข้อความแจ้งเตือนเปิดเสียง --- */
         .sound-reminder {
             color: #8B5DFF;
             font-size: 0.8rem;
@@ -227,7 +232,6 @@
             animation: pulse 2s infinite;
         }
         
-        /* --- ข้อความแจ้งเตือนในช่องว่างด้านล่าง (เฉพาะคอม) --- */
         .sound-reminder-right {
             color: #8B5DFF;
             font-size: 4rem;
@@ -240,7 +244,6 @@
             width: 100%;
         }
         
-        /* --- ซ่อนข้อความใต้วิดีโอในหน้าจอคอม และจัด right-boxes เป็น grid --- */
         @media (min-width: 769px) {
             .sound-reminder {
                 display: none;
@@ -268,15 +271,6 @@
             }
         }
 
-        /* --- กรอบคำอธิบายหลัก (อยู่ใต้วิดีโอ) --- */
-        .main-description-container {
-            width: 100%;
-            max-width: 1200px; /* กว้างเท่ากริด */
-            margin: 2rem auto;
-            padding: 0 1rem;
-            box-sizing: border-box;
-        }
-
         /* --- (ส่วนล่าง) Layout กริด (4 คอลัมน์) --- */
         .text-content-wrapper {
             width: 100%;
@@ -298,28 +292,28 @@
             box-shadow: 0 10px 30px var(--shadow-color);
             box-sizing: border-box;
             
-            /* เอฟเฟกต์ scroll animation */
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.6s ease;
         }
         
-        /* --- การ์ดที่แสดงผลเมื่อ scroll --- */
         .text-card.visible {
             opacity: 1;
             transform: translateY(0);
         }
         
-        /* --- การ์ดที่แสดงตั้งแต่ต้น (1-2) --- */
         .text-card.initial-visible {
             opacity: 1;
             transform: translateY(0);
-        }        .text-card h2 {
+        }      
+        
+        .text-card h2 {
             color: var(--darker-text); 
             font-size: 1.25rem; 
             font-weight: 700;
             margin-top: 0;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem; 
+            text-align: center; 
         }
 
         .text-card p {
@@ -329,36 +323,189 @@
             margin: 0;
         }
 
-        /* --- สไตล์สำหรับ 12 กล่องล่าง 1:1 --- */
-        .grid-card {
-            aspect-ratio: 1 / 1; 
+        .card-content-image {
+            float: left;
+            width: 40%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            margin-right: 1rem; 
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
         }
 
-        /* --- (Responsive) ส่วนล่าง (Grid) --- */
+        /* --- (แก้ไข) สไตล์สำหรับ Modal (Popup) --- */
+        .modal {
+            display: flex; /* เปลี่ยนเป็น flex เพื่อจัดกลาง */
+            align-items: center; /* จัดกลางแนวตั้ง */
+            justify-content: center; /* จัดกลางแนวนอน */
+            position: fixed; 
+            z-index: 2000; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.6); /* พื้นหลังมืด */
+            
+            /* --- (แก้ไข) ส่วนสำหรับแอนิเมชัน --- */
+            opacity: 0;
+            visibility: hidden;
+            /* (แก้ไข) เพิ่ม transition 'visibility' พร้อม delay 0.4s ตอนปิด */
+            transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+        }
+        
+        /* (เพิ่มใหม่) คลาสสำหรับแสดง Modal */
+        .modal.modal-open {
+            opacity: 1;
+            visibility: visible;
+            /* (เพิ่มใหม่) ตั้งค่า transition 'visibility' ตอนเปิด (ไม่-delay) */
+            transition: opacity 0.4s ease, visibility 0s linear 0s;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto; /* แก้ไขเป็น auto (เพราะใช้ flex จัดกลางแล้ว) */
+            padding: 25px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 1rem;
+            position: relative;
+
+            /* --- (เพิ่มใหม่) แอนิเมชัน Pop-up --- */
+            transform: scale(0.9) translateY(20px); /* เริ่มต้นที่เล็กกว่าและต่ำกว่าเล็กน้อย */
+            transition: transform 0.4s ease;
+        }
+        
+        /* (เพิ่มใหม่) เมื่อ Modal เปิด ให้ .modal-content เคลื่อนไหว */
+        .modal.modal-open .modal-content {
+            transform: scale(1) translateY(0); /* กลับสู่ขนาดปกติและตำแหน่งเดิม */
+        }
+        
+        /* (เพิ่มใหม่) Clearfix สำหรับ modal content (กัน layout เพี้ยน) */
+        .modal-content::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .modal-close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .modal-content h2 {
+            text-align: center;
+            color: var(--darker-text);
+            margin-top: 0;
+        }
+        
+        .modal-content .card-content-image {
+            float: left;
+            width: 40%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+        }
+        /* --- (จบ) สไตล์ Modal --- */
+
+
+        /* --- Next Button Styles --- */
+        .next-button-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .next-button-container.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .next-button {
+            background-color: var(--primary-text);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(139, 93, 255, 0.4);
+            transition: all 0.3s ease;
+            font-family: 'Kanit', sans-serif;
+        }
+        
+        /* (เพิ่มใหม่) สไตล์ปุ่ม "ดูเพิ่มเติม" ในมือถือ (ใช้สไตล์คล้ายๆ Next) */
+        .mobile-popup-button {
+            display: none; /* ซ่อนใน desktop ก่อน */
+            background-color: var(--primary-text);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 6px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+            width: 80%;
+            margin-bottom: 0.5rem; /* ดันขึ้นจากขอบล่าง */
+            transition: background-color 0.3s ease;
+        }
+        
+        .mobile-popup-button:hover {
+            background-color: var(--darker-text);
+        }
+        
+        /* (เพิ่มใหม่) รูป Icon กลางการ์ด (สำหรับมือถือ) */
+        .text-card-mobile-icon {
+            display: none; /* ซ่อนใน desktop */
+        }
+
+
+        /* --- (Responsive) --- */
         @media (min-width: 1200px) {
             .main-layout {
                 gap: 3rem;
             }
-            
             .right-boxes {
                 gap: 2rem;
             }
-            
             .square-box {
                 width: 350px;
                 height: 350px;
             }
-            
             .video-container {
                 max-width: 350px;
             }
-            
             .video-responsive-wrapper {
                 padding-bottom: 100% !important;
                 height: 350px;
                 width: 350px;
             }
         }
+        
+        /* (แก้ไข) เพิ่ม Clearfix ให้ .text-card (เฉพาะ Desktop) */
+        @media (min-width: 769px) {
+            /* นี่คือตัวแก้กล่อง 9, 10 หาย */
+            .text-card::after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+        }
+
 
         @media (max-width: 768px) {
             .text-content-wrapper {
@@ -386,6 +533,47 @@
                 width: 100%;
                 max-width: 200px;
             }
+
+            /* --- (เพิ่มใหม่) แก้ไขการ์ดล่างสำหรับมือถือ --- */
+            
+            /* 1. บังคับการ์ดเป็น 1:1 และจัด layout ใหม่ */
+            .text-card {
+                aspect-ratio: 1 / 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between; /* จัด หัวข้อ(บน), รูป(กลาง), ปุ่ม(ล่าง) */
+                align-items: center;
+                padding: 1rem; /* ลด padding */
+            }
+
+            /* 2. ซ่อนรูป (float) และข้อความ p (Desktop) */
+            .text-card .card-content-image,
+            .text-card p {
+                display: none; 
+            }
+            
+            /* 3. จัดการหัวข้อ (h2) ใหม่ */
+            .text-card h2 {
+                font-size: 1rem; /* ลดขนาด */
+                margin-bottom: 0.5rem;
+            }
+
+            /* 4. แสดงรูป Icon กลางการ์ด */
+            .text-card-mobile-icon {
+                display: block; 
+                width: 50%; 
+                height: auto;
+                object-fit: cover;
+                aspect-ratio: 1 / 1; /* ทำให้เป็น 1:1 */
+                margin: 0.5rem 0;
+                border-radius: 0.5rem;
+            }
+
+            /* 5. แสดงปุ่ม "ดูเพิ่มเติม" */
+            .mobile-popup-button {
+                display: block; 
+            }
+            /* --- (จบ) แก้ไขการ์ดล่างสำหรับมือถือ --- */
         }
         
         @media (max-width: 640px) {
@@ -393,22 +581,18 @@
                 margin: 1rem auto;
                 max-width: 180px;
             }
-            
             .square-box {
                 width: 180px;
                 height: 180px;
             }
-            
             .right-boxes {
                 width: 100%;
                 max-width: 180px;
                 gap: 1.2rem;
             }
-            
             .text-content-wrapper {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
             .main-layout {
                 flex-direction: column;
                 align-items: center;
@@ -420,21 +604,17 @@
             .video-container {
                 max-width: 160px;
             }
-            
             .square-box {
                 width: 160px;
                 height: 160px;
             }
-            
             .right-boxes {
                 max-width: 160px;
                 gap: 1rem;
             }
-            
             .square-label {
                 font-size: 1rem;
             }
-            
             .square-content {
                 font-size: 0.8rem;
                 padding: 1rem;
@@ -445,7 +625,6 @@
 </head>
 <body>
 
-    <!-- Desktop Layout: คลิปซ้าย กล่อง1กลาง กล่อง2ขวา -->
     <div class="main-layout">
         <div class="video-container">
             <div class="video-responsive-wrapper">
@@ -461,14 +640,14 @@
 
         <div class="right-boxes">
             <div class="square-box" onclick="toggleBox(this)">
-                <div class="square-label">กล่องที่ 1</div>
+                <div class="square-label">คลิ๊กเพื่อดูค้าบ</div>
                 <div class="square-content">
-                    นี่คือเนื้อหาที่ซ่อนอยู่ด้านในของกล่องที่ 1 เมื่อคลิกจะแสดงข้อความนี้ขึ้นมา สามารถใส่ข้อมูลเพิ่มเติมเกี่ยวกับวิดีโอหรือคำอธิบายต่างๆ ได้ที่นี่
+                    <img src="picture/11.png" alt="เนื้อหา กล่อง 1" class="content-image">
                 </div>
             </div>
 
             <div class="square-box" onclick="toggleBox(this)">
-                <div class="square-label">กล่องที่ 2</div>
+                <div class="square-label">อันนี้ก็คลิ๊กด้ายย</div>
                 <div class="square-content">
                     นี่คือเนื้อหาที่ซ่อนอยู่ด้านในของกล่องที่ 2 สามารถเพิ่มรายละเอียดเพิ่มเติม เช่น ข้อมูลทางเทคนิค หรือข้อมูลเบื้องต้นเกี่ยวกับเนื้อหาในวิดีโอได้
                 </div>
@@ -480,7 +659,6 @@
         </div>
     </div>
 
-    <!-- Mobile Layout: คลิปซ้าย กล่อง1ขวาบน กล่อง2ขวาล่าง -->
     <div class="mobile-layout">
         <div class="video-container">
             <div class="video-responsive-wrapper">
@@ -496,14 +674,14 @@
 
         <div class="mobile-right">
             <div class="square-box" onclick="toggleBox(this)">
-                <div class="square-label">กล่องที่ 1</div>
+                <div class="square-label">คลิ๊กเพื่อดูค้าบ</div>
                 <div class="square-content">
-                    นี่คือเนื้อหาที่ซ่อนอยู่ด้านในของกล่องที่ 1 เมื่อคลิกจะแสดงข้อความนี้ขึ้นมา สามารถใส่ข้อมูลเพิ่มเติมเกี่ยวกับวิดีโอหรือคำอธิบายต่างๆ ได้ที่นี่
+                    <img src="picture/11.png" alt="เนื้อหา กล่อง 1" class="content-image">
                 </div>
             </div>
 
             <div class="square-box" onclick="toggleBox(this)">
-                <div class="square-label">กล่องที่ 2</div>
+                <div class="square-label">อันนี้ก็คลิ๊กด้ายย</div>
                 <div class="square-content">
                     นี่คือเนื้อหาที่ซ่อนอยู่ด้านในของกล่องที่ 2 สามารถเพิ่มรายละเอียดเพิ่มเติม เช่น ข้อมูลทางเทคนิค หรือข้อมูลเบื้องต้นเกี่ยวกับเนื้อหาในวิดีโอได้
                 </div>
@@ -514,65 +692,109 @@
 
     <div class="text-content-wrapper">
         
-        <div class="text-card grid-card initial-visible"> 
+        <div class="text-card initial-visible"> 
             <h2>หัวข้อ 1</h2>
-            <p>เนื้อหาสำหรับกล่องที่ 1</p>
+            <img src="picture/1.png" alt="หัวข้อ 1" class="card-content-image">
+            <p>เนื้อหาสำหรับกล่องที่ 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+            <img src="picture/1.png" alt="หัวข้อ 1" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
         </div>
-        <div class="text-card grid-card initial-visible"> 
+        
+        <div class="text-card initial-visible"> 
             <h2>หัวข้อ 2</h2>
-            <p>เนื้อหาสำหรับกล่องที่ 2</p>
+            <img src="picture/2.png" alt="หัวข้อ 2" class="card-content-image">
+            <p>เนื้อหาสำหรับกล่องที่ 2. Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+            <img src="picture/2.png" alt="หัวข้อ 2" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
         </div>
-        <div class="text-card grid-card">
+        
+        <div class="text-card">
             <h2>หัวข้อ 3</h2>
-            <p>เนื้อหาสำหรับกล่องที่ 3</p>
+            <img src="picture/3.png" alt="หัวข้อ 3" class="card-content-image">
+            <p>เนื้อหาสำหรับกล่องที่ 3. Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+            <img src="picture/3.png" alt="หัวข้อ 3" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
         </div>
-        <div class="text-card grid-card">
+        
+        <div class="text-card">
             <h2>หัวข้อ 4</h2>
-            <p>เนื้อหาสำหรับกล่องที่ 4</p>
+            <img src="picture/4.png" alt="หัวข้อ 4" class="card-content-image">
+            <p>เนื้อหาสำหรับกล่องที่ 4. Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+            <img src="picture/4.png" alt="หัวข้อ 4" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
         </div>
 
-        <div class="text-card grid-card">
+        <div class="text-card">
             <h2>หัวข้อ 5</h2>
-            <p>เนื้อหาสำหรับกล่องที่ 5</p>
+            <img src="picture/5.png" alt="หัวข้อ 5" class="card-content-image">
+            <p>เนื้อหาสำหรับกล่องที่ 5. Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+            <img src="picture/5.png" alt="หัวข้อ 5" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
         </div>
-        <div class="text-card grid-card">
+        
+        <div class="text-card">
             <h2>หัวข้อ 6</h2>
-            <p>เนื้อหาสำหรับกล่องที่ 6</p>
+            <img src="picture/6.png" alt="หัวข้อ 6" class="card-content-image">
+            <p>เนื้อหาสำหรับกล่องที่ 6. Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+            <img src="picture/6.png" alt="หัวข้อ 6" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
         </div>
-        <div class="text-card grid-card">
+        
+        <div class="text-card">
             <h2>หัวข้อ 7</h2>
-            <p>เนื้อหาสำหรับกล่องที่ 7</p>
+            <img src="picture/7.png" alt="หัวข้อ 7" class="card-content-image">
+            <p>เนื้อหาสำหรับกล่องที่ 7. Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+            <img src="picture/7.png" alt="หัวข้อ 7" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
         </div>
-        <div class="text-card grid-card">
+        
+        <div class="text-card">
             <h2>หัวข้อ 8</h2>
-            <p>เนื้อหาสำหรับกล่องที่ 8</p>
+            <img src="picture/8.png" alt="หัวข้อ 8" class="card-content-image">
+            <p>เนื้อหาสำหรับกล่องที่ 8. Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+            <img src="picture/8.png" alt="หัวข้อ 8" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
         </div>
 
-        <div class="text-card grid-card">
+        <div class="text-card">
             <h2>หัวข้อ 9</h2>
-            <p>เนื้อหาสำหรับกล่องที่ 9</p>
+            <img src="picture/9.png" alt="หัวข้อ 9" class="card-content-image">
+            <p>เนื้อหาสำหรับกล่องที่ 9. Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+            <img src="picture/9.png" alt="หัวข้อ 9" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
         </div>
-        <div class="text-card grid-card">
+        
+        <div class="text-card">
             <h2>หัวข้อ 10</h2>
-            <p>เนื้อหาสำหรับกล่องที่ 10</p>
-        </div>
-        <div class="text-card grid-card">
-            <h2>หัวข้อ 11</h2>
-            <p>เนื้อหาสำหรับกล่องที่ 11</p>
-        </div>
-        <div class="text-card grid-card">
-            <h2>หัวข้อ 12</h2>
-            <p>เนื้อหาสำหรับกล่องที่ 12</p>
+            <img src="picture/10.png" alt="หัวข้อ 10" class="card-content-image">
+            <p>เนื้อหาสำหรับกล่องที่ 10. Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+            <img src="picture/10.png" alt="หัวข้อ 10" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
         </div>
 
     </div>
+    <div class="next-button-container" id="nextButtonContainer">
+        <button class="next-button" onclick="goToNext()">
+            ถัดไป
+        </button>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <img id="modalImage" src="" alt="Popup Image" class="card-content-image">
+            <p id="modalText"></p>
+        </div>
+    </div>
+
 
     <script>
         function toggleBox(element) {
             element.classList.toggle('active');
         }
 
-        // Scroll Animation สำหรับกล่องด้านล่าง
+        // Scroll Animation
         function handleScrollAnimation() {
             const cards = document.querySelectorAll('.text-card:not(.initial-visible)');
             
@@ -581,16 +803,67 @@
                 const cardHeight = card.offsetHeight;
                 const windowHeight = window.innerHeight;
                 
-                // แสดงกล่องเมื่อเลื่อนลงมาเจอ (70% ของหน้าจอ)
                 if (cardTop < windowHeight * 0.7) {
                     card.classList.add('visible');
                 }
             });
+
+            // Next button
+            const nextButtonContainer = document.getElementById('nextButtonContainer');
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            
+            if (scrollTop + windowHeight >= documentHeight - 200) {
+                nextButtonContainer.classList.add('visible');
+            } else {
+                nextButtonContainer.classList.remove('visible');
+            }
         }
 
-        // เรียกใช้ฟังก์ชัน scroll animation
+        // Function for Next button
+        function goToNext() {
+            window.location.href = 'index.html';
+        }
+
         window.addEventListener('scroll', handleScrollAnimation);
         window.addEventListener('load', handleScrollAnimation);
+
+
+        // --- (แก้ไข) Modal JavaScript ---
+        var modal = document.getElementById('myModal');
+
+        function openModal(buttonElement) {
+            // 1. หาการ์ดแม่ (.text-card)
+            var card = buttonElement.closest('.text-card');
+            
+            // 2. ดึงข้อมูลจากองค์ประกอบ (ที่ซ่อนไว้ในมือถือ)
+            var title = card.querySelector('h2').innerText;
+            var text = card.querySelector('p').innerText;
+            var imgSrc = card.querySelector('.card-content-image').src;
+            
+            // 3. ยัดข้อมูลใส่ใน modal
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerText = text;
+            document.getElementById('modalImage').src = imgSrc;
+            
+            // 4. แสดง modal (โดยการเพิ่มคลาส)
+            modal.classList.add('modal-open');
+        }
+
+        // ฟังก์ชันปิด Modal (สำหรับปุ่ม X)
+        function closeModal() {
+            modal.classList.remove('modal-open');
+        }
+
+        // ปิดเมื่อคลิกนอก modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.classList.remove('modal-open');
+            }
+        }
+        // --- (จบ) Modal JavaScript ---
+
     </script>
 
 </body>
