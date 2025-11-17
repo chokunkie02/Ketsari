@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ของขวัญที่ส่งไป</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #F8F6FF;
+            --primary-text: #8B5DFF;
+            --darker-text: #6A3ED4;
+            --shadow-color: rgba(106, 62, 212, 0.2);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 0; 
+            box-sizing: border-box;
+            opacity: 0; 
+            animation: fadeInPage 1.5s ease-in-out forwards;
+        }
+        
+        body.modal-is-open {
+            overflow: hidden;
+        }
+        
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        #transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 9999;
+            pointer-events: none;
+            transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out;
+        }
+        
+        #transition-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .page-title {
+            color: var(--darker-text);
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 2.5rem 0;
+        }
+        
+        .text-content-wrapper {
+            width: 100%;
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 1rem;
+            padding-bottom: 6rem;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 1.5rem; 
+        }
+
+        .text-card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            box-sizing: border-box;
+            
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        
+        .text-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .text-card.initial-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }      
+        
+        .text-card h2 {
+            color: var(--darker-text); 
+            font-size: 1.25rem; 
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 1rem; 
+            text-align: center; 
+        }
+
+        .text-card p {
+            color: #4A5568; 
+            font-size: 0.9rem; 
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .card-content-image {
+            float: left;
+            width: 40%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            margin-right: 1rem; 
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        /* --- (แก้ไข) สไตล์สำหรับ Modal (Popup) --- */
+        .modal {
+            display: flex;
+            /* (แก้ไข) จัดชิดบน (flex-start) เพื่อให้ margin-top ทำงาน */
+            align-items: flex-start; 
+            justify-content: center; 
+            position: fixed; 
+            z-index: 2000; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto; 
+            background-color: rgba(0,0,0,0.6);
+            
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+        }
+        
+        .modal.modal-open {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.4s ease, visibility 0s linear 0s;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            /* (แก้ไข) ลบ margin: auto และ transform ออก */
+            margin: 0 auto; /* เริ่มต้นที่ 0 auto */
+            padding: 25px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 1rem;
+            position: relative; 
+            max-height: 85vh;
+            /* (แก้ไข) ให้มันเลื่อนตำแหน่ง (margin-top) อย่างนุ่มนวล */
+            transition: margin-top 0.4s ease;
+        }
+        
+        /* (ลบ) .modal.modal-open .modal-content { ... transform ... } */
+        
+        .modal-content::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .modal-close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .modal-content h2 {
+            text-align: center;
+            color: var(--darker-text);
+            margin-top: 0;
+        }
+        
+        .modal-content .card-content-image {
+            float: left;
+            width: 40%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        .mobile-popup-button {
+            display: none;
+            background-color: var(--primary-text);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 6px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+            width: 80%;
+            margin-bottom: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .mobile-popup-button:hover {
+            background-color: var(--darker-text);
+        }
+        
+        .text-card-mobile-icon {
+            display: none;
+        }
+
+        .next-button-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .next-button-container.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .next-button {
+            background-color: var(--primary-text);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(139, 93, 255, 0.4);
+            transition: all 0.3s ease;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .next-button:hover {
+            background-color: var(--darker-text);
+            transform: scale(1.05);
+        }
+
+
+        /* --- (Responsive) --- */
+        @media (min-width: 769px) {
+            .text-card::after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+        }
+
+        @media (max-width: 768px) {
+        
+            .page-title {
+                font-size: 2.2rem;
+                margin: 2rem 0 1.5rem 0;
+            }
+            
+            .text-content-wrapper {
+                grid-template-columns: repeat(3, 1fr);
+                padding-bottom: 8rem;
+            }
+            
+            .text-card {
+                aspect-ratio: 1 / 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1rem;
+            }
+
+            .text-card .card-content-image,
+            .text-card p {
+                position: absolute;
+                opacity: 0;
+                width: 0;
+                height: 0;
+                overflow: hidden;
+                pointer-events: none; 
+            }
+            
+            .text-card h2 {
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .text-card-mobile-icon {
+                display: block; 
+                width: 50%; 
+                height: auto;
+                object-fit: cover;
+                aspect-ratio: 1 / 1;
+                margin: 0.5rem 0;
+                border-radius: 0.5rem;
+            }
+
+            .mobile-popup-button {
+                display: block; 
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .text-content-wrapper {
+                grid-template-columns: repeat(2, 1fr);
+                padding-bottom: 10rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="transition-overlay"></div>
+
+    <h1 class="page-title">ของขวัญที่ส่งไป</h1>
+    
+    <div class="text-content-wrapper">
+        
+        <div class="text-card initial-visible" data-id="1"> 
+            <h2>Super Tom</h2>
+            <img src="picture/1.png" alt="Super Tom" class="card-content-image">
+            <p>อันนี้ไปหยอดเหรียญโมเดลมา ไม่รู้ว่าจะชอบรึป่าวว แต่อันนี้ฟีลแบบ "ซุปเปอร์ทอมจะคอยปกป้องคุณเอง" แนวนี้ๆ5655</p>
+            <img src="picture/1.png" alt="Super Tom" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
+        </div>
+        
+        <div class="text-card initial-visible" data-id="2"> 
+            <h2>ตุ๊กตา Kuromi</h2>
+            <img src="picture/2.png" alt="ตุ๊กตา Kuromi" class="card-content-image">
+            <p>อันนี้ไปเจอตอนไปเดินเที่ยว เห็นว่าเป็นสีม่วงเลยนึกถึงน้องก็เลยซื้อมาเก็บไว้ อันนี้น่าจะเป็นอันแรกสุดเลยที่แบบนึกว่าเก็บไว้ให้ตอนวันเกิดด</p>
+            <img src="picture/2.png" alt="ตุ๊กตา Kuromi" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
+        </div>
+        
+        <div class="text-card initial-visible" data-id="3">
+            <h2>figure Kuromi</h2>
+            <img src="picture/3.png" alt="figure Kuromi" class="card-content-image">
+            <p>อันนี้ซื้อตอนที่พึ่งได้แชมป์มา ตอนนั้นอยากมีโมเดลตั้งไว้ที่โต๊ะคอม ละแบบร้านที่พี่สั่งมันมีคุโรมิด้วย ก็เลยคิดว่าซื้อให้น้องดีกว่า กะจะซื้อให้ตัวเดียว แต่ยกกล่องมันถูกกว่าา</p>
+            <img src="picture/3.png" alt="figure Kuromi" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
+        </div>
+        
+        <div class="text-card initial-visible" data-id="4">
+            <h2>ซันซุ</h2>
+            <img src="picture/4.png" alt="ซันซุ" class="card-content-image">
+            <p>อันนี้ไม่มีไรอยากซื้อให้เฉยๆ656655</p>
+            <img src="picture/4.png" alt="ซันซุ" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
+        </div>
+
+        <div class="text-card" data-id="5">
+            <h2>ซูโม่</h2>
+            <img src="picture/5.png" alt="ซูโม่" class="card-content-image">
+            <p>อันนี้พี่มีอยู่แล้วที่ห้อง เห็นน้องบอกชอบช๊อกโกแลตก็เลยให้อันนี้ไปด้วยย</p>
+            <img src="picture/5.png" alt="ซูโม่" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
+        </div>
+        
+        <div class="text-card" data-id="6">
+            <h2>กล่องจุ่มม</h2>
+            <img src="picture/6.png" alt="กล่องจุ่มม" class="card-content-image">
+            <p>อันนี้ก็ต่อจากที่พี่ไปเที่ยวอะ ก็แบบเห้ยถ้าให้แค่นี้มันน้อยไปเลยไปหากล่องสุ่ม ตอนนั้นคิดว่าเอ้ยยให้แค่ตุ๊กตาเล็กๆคงไม่พอ หากล่องสุ่มให้สักอัน แต่ตอนนี้พี่คิดว่าที่ให้ไปเยอะมากๆ มากๆจริงๆ พี่ซื้อมาแล้วอะดิ เคียดเลยเนี่ยย ทุกครั้งที่นึกถึงน้องก็สั่งของตลอด</p>
+            <img src="picture/6.png" alt="กล่องจุ่มม" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
+        </div>
+        
+        <div class="text-card" data-id="7">
+            <h2>เค้ก Kuromi</h2>
+            <img src="picture/7.png" alt="เค้ก Kuromi" class="card-content-image">
+            <p>อันนี้ก็เป็นตุ๊กตา Kuromi ที่น่ารักมากๆ พอบีบไปแล้วอะมันจะมีเสียงด้วยย ลองดูนะ อันนี้ก็เลื่อนเจอละนึกถึงน้องก็เลยสั่งมาา</p>
+            <img src="picture/7.png" alt="เค้ก Kuromi" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
+        </div>
+        
+        <div class="text-card" data-id="8">
+            <h2>โคมไฟ Kuromi</h2>
+            <img src="picture/8.png" alt="โคมไฟ Kuromi" class="card-content-image">
+            <p>อันนี้ตอนไปเซ็น ก็ไปเดินเล่นไปเจอโคมไฟอันนี้ก็นึกถึงน้องอีกละ ละก็ซื้อมาอีกเนี่ยยย เห้ยยพี่แม่งซื้อเยอะชิบหาย พี่ขอโทษ พี่เครียดเลยเนี่ย</p>
+            <img src="picture/8.png" alt="โคมไฟ Kuromi" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
+        </div>
+
+        <div class="text-card" data-id="9">
+            <h2>DAIFUKU</h2>
+            <img src="picture/9.png" alt="DAIFUKU" class="card-content-image">
+            <p>อันนี้ก็ช๊อกโกแลตที่ซื้อให้ ตอนแรกจะซื้ออีกแบบ แต่เห็นอันน้น่ากินดีเลยซื้อมา</p>
+            <img src="picture/9.png" alt="DAIFUKU" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
+        </div>
+        
+        <div class="text-card" data-id="10">
+            <h2></h2>หัวเข็มขัดPSU</h2>
+            <img src="picture/10.png" alt="หัวเข็มขัดPSU" class="card-content-image">
+            <p>อันนี้ก็ค่อยเอามาคืนตอนที่น้องได้มหาลัยน้าาาา</p>
+            <img src="picture/10.png" alt="หัวเข็มขัดPSU" class="text-card-mobile-icon">
+            <button class="mobile-popup-button" onclick="openModal(this)">ดูเพิ่มเติม</button>
+        </div>
+
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <img id="modalImage" src="" alt="Popup Image" class="card-content-image">
+            <p id="modalText"></p>
+        </div>
+    </div>
+    
+    <div class="next-button-container" id="nextButtonContainer">
+        <button class="next-button" onclick="goToNext()">
+            ถัดไป
+        </button>
+    </div>
+
+
+    <script>
+        // --- 1. Scroll Animation (เหมือนเดิม) ---
+        function handleScrollAnimation() {
+            const cards = document.querySelectorAll('.text-card:not(.initial-visible)');
+            cards.forEach(card => {
+                const cardTop = card.getBoundingClientRect().top;
+                const cardBottom = card.getBoundingClientRect().bottom;
+                const windowHeight = window.innerHeight;
+                
+                if (cardTop < windowHeight * 0.8) {
+                    card.classList.add('visible');
+                }
+                
+                if (cardTop > windowHeight || cardBottom < 0) {
+                     card.classList.remove('visible');
+                }
+            });
+            
+            const nextButtonContainer = document.getElementById('nextButtonContainer');
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            
+            if (scrollTop + windowHeight >= documentHeight - 200) {
+                nextButtonContainer.classList.add('visible');
+            } else {
+                nextButtonContainer.classList.remove('visible');
+            }
+        }
+        window.addEventListener('scroll', handleScrollAnimation);
+        window.addEventListener('load', handleScrollAnimation);
+
+        // --- 2. Next Button (เหมือนเดิม) ---
+        function goToNext() {
+            const overlay = document.getElementById('transition-overlay');
+            if (overlay) {
+                overlay.classList.add('visible');
+            }
+            
+            setTimeout(() => {
+                window.location.href = 'thought.html'; 
+            }, 1500); 
+        }
+
+        // --- 3. (แก้ไข) Modal JavaScript (Logic ใหม่ ตามที่เพื่อนขอ!) ---
+        var modal = document.getElementById('myModal');
+        var modalContent = modal.querySelector('.modal-content');
+
+        function openModal(buttonElement) {
+            var card = buttonElement.closest('.text-card');
+            
+            // (ใหม่) ดึง ID ของการ์ด
+            const cardId = card.getAttribute('data-id');
+            
+            // --- (ส่วนดึงข้อมูล) ---
+            var title = card.querySelector('h2').innerText;
+            var text = card.querySelector('p').innerText;
+            var imgSrc = card.querySelector('.card-content-image').src;
+            
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerText = text;
+            document.getElementById('modalImage').src = imgSrc;
+            
+            // --- (Logic ใหม่: Hard-Coded ตาม ID ที่เพื่อนขอ) ---
+            
+            let desiredTop = '100px'; // ค่าเริ่มต้น (ถ้าหลุด)
+
+            switch (cardId) {
+                case '1':
+                case '2':
+                    // *** แก้ไขตำแหน่งของกลุ่ม 1, 2 ที่นี่ ***
+                    desiredTop = '100px'; 
+                    break;
+                case '3':
+                case '4':
+                    // *** แก้ไขตำแหน่งของกลุ่ม 3, 4 ที่นี่ ***
+                    desiredTop = '200px';
+                    break;
+                case '5':
+                case '6':
+                    // *** แก้ไขตำแหน่งของกลุ่ม 5, 6 ที่นี่ ***
+                    desiredTop = '450px';
+                    break;
+                case '7':
+                case '8':
+                    // *** แก้ไขตำแหน่งของกลุ่ม 7, 8 ที่นี่ ***
+                    desiredTop = '700px';
+                    break;
+                case '9':
+                case '10':
+                    // *** แก้ไขตำแหน่งของกลุ่ม 9, 10 ที่นี่ ***
+                    desiredTop = '900px';
+                    break;
+            }
+
+            // 4. สั่งให้ป๊อปอัพขยับไปตามตำแหน่งที่กำหนด!
+            modalContent.style.margin = desiredTop + ' auto 0 auto';
+            
+            // --- (ส่วนแสดงผล) ---
+            document.body.classList.add('modal-is-open'); 
+            modal.classList.add('modal-open');
+        }
+
+        function closeModal() {
+            document.body.classList.remove('modal-is-open'); 
+            modal.classList.remove('modal-open');
+            
+            // (เพิ่ม) รีเซ็ต margin-top กลับไปเป็นค่าเริ่มต้น
+            modalContent.style.margin = '';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                document.body.classList.remove('modal-is-open'); 
+                modal.classList.remove('modal-open');
+                
+                // (เพิ่ม) รีเซ็ต margin-top กลับไปเป็นค่าเริ่มต้น
+                modalContent.style.margin = '';
+            }
+        }
+    </script>
+
+</body>
+</html>
