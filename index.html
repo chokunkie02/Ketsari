@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Birthday!</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tone.js library for web audio -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600&display=swap" rel="stylesheet">
@@ -195,10 +192,8 @@
     </style>
 </head>
 <body>
-    <!-- Overlay for page transitions -->
     <div id="fadeOverlay"></div>
 
-    <!-- ===== 1. Countdown Page ===== -->
     <div id="page-countdown" class="page-container">
          <div class="text-center">
             <h1 id="countdownText" class="text-4xl sm:text-5xl md:text-7xl font-bold hidden"></h1>
@@ -206,7 +201,6 @@
         </div>
     </div>
 
-    <!-- ===== 2. Birthday Page ===== -->
     <div id="page-birthday" class="page-container hidden">
         <canvas id="fireworks-canvas" style="position:absolute; top:0; left:0; z-index: 5; pointer-events: none;"></canvas>
         <div id="stars-container"></div>
@@ -229,7 +223,6 @@
         </div>
     </div>
 
-    <!-- ===== 3. Start Page ("Are you ready?") ===== -->
     <div id="page-start" class="page-container hidden">
         <div class="text-center">
             <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold mb-8">พร้อมไหม</h1>
@@ -237,7 +230,6 @@
         </div>
     </div>
 
-    <!-- ===== 4. Gate Page (Password) ===== -->
     <div id="page-gate" class="page-container hidden">
         <div class="text-center">
             <h1 class="text-3xl md:text-5xl font-bold mb-6">ถ้าพร้อมแล้วว โปรดใส่รหัส</h1>
@@ -254,7 +246,6 @@
         </div>
     </div>
 
-    <!-- Hint Modal -->
     <div id="hintModal" class="fixed inset-0 z-[10000] items-center justify-center hidden">
         <div class="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-4" style="background-color: var(--bg-color); border: 2px solid var(--primary-accent);">
             <p id="hintText" class="text-2xl font-bold" style="color: var(--darker-text);"></p>
@@ -407,12 +398,17 @@
             // --- AUDIO FUNCTIONS ---
             // =================================================================
             
+            // ⭐️⭐️⭐️ [START OF CHANGE 2] ⭐️⭐️⭐️
             async function startBackgroundMusic() {
                 try {
+                    // เราไม่จำเป็นต้อง await Tone.start() ที่นี่อีกแล้ว
+                    // เพราะเราทำไปแล้วตอนกดปุ่ม
+                    // แต่ใส่ไว้เช็กเผื่อเฉยๆ (แบบไม่ await) ก็ได้ครับ
                     if (!isAudioReady) {
-                        await Tone.start();
-                        isAudioReady = true;
-                        console.log('Audio context started');
+                        console.warn('Audio context not ready. Trying to start (may fail on iOS).');
+                        // ไม่ต้อง await เพราะจะทำให้ค้างถ้า user ไม่ได้กด
+                        // และการเรียกครั้งแรก (ใน click) คือครั้งที่สำคัญที่สุด
+                        Tone.start().then(() => { isAudioReady = true; }); 
                     }
                     
                     // Set master volume to 50%
@@ -427,6 +423,7 @@
                     console.log('Audio setup failed:', error);
                 }
             }
+            // ⭐️⭐️⭐️ [END OF CHANGE 2] ⭐️⭐️⭐️
             
             function fadeOutMusic() {
                 if (musicFadeInterval) {
@@ -476,11 +473,25 @@
             
             confirmButton.addEventListener('click', handlePinConfirm);
 
+            // ⭐️⭐️⭐️ [START OF CHANGE 1] ⭐️⭐️⭐️
             startCountdownButton.addEventListener('click', () => {
+                
+                // ปลดล็อก Audio Context ทันทีที่ผู้ใช้กด
+                // เพื่อให้ iOS อนุญาตให้เล่นเสียงได้
+                if (!isAudioReady) {
+                    Tone.start().then(() => {
+                        isAudioReady = true;
+                        console.log('Audio context started on click (iOS fix)');
+                    }).catch((e) => {
+                        console.error('Audio start failed', e);
+                    });
+                }
+
                 startCountdownButton.classList.add('hidden');
                 countdownTextElement.classList.remove('hidden');
                 updateCountdown();
             });
+            // ⭐️⭐️⭐️ [END OF CHANGE 1] ⭐️⭐️⭐️
 
             pinInputs.forEach((input, index) => {
                 input.addEventListener('input', () => {
@@ -818,4 +829,3 @@
     </script>
 </body>
 </html>
-

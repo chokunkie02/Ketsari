@@ -188,6 +188,12 @@
         }
         /* === สิ้นสุดส่วนที่เพิ่ม === */
 
+        /* --- [เพิ่ม] Style สำหรับ Modal --- */
+        #start-modal {
+            transition: opacity 0.5s ease-in-out;
+        }
+        /* --- [สิ้นสุดส่วนที่เพิ่ม] --- */
+
     </style>
 </head>
 <body style="background-color: #F8F6FF;">
@@ -198,6 +204,11 @@
     </audio>
     <div id="transition-overlay"></div>
 
+    <div id="start-modal" class="fixed inset-0 z-[10001] flex items-center justify-center" style="background-color: rgba(248, 246, 255, 0.9);">
+        <button id="start-thought-button" class="text-white font-bold py-3 px-8 sm:py-4 sm:px-10 rounded-full text-lg sm:text-xl md:text-2xl active:scale-95 transition-all duration-200 shadow-lg" style="background-color: var(--primary-text);" onmouseover="this.style.backgroundColor='var(--darker-text)'" onmouseout="this.style.backgroundColor='var(--primary-text)'">
+            กดเพื่ออ่าน
+        </button>
+    </div>
     <div id="thought-view" class="view relative overflow-hidden" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; width: 100vw;">
         <div id="particles-container" class="absolute inset-0 pointer-events-none">
             </div>
@@ -219,6 +230,12 @@
         // DOM Elements
         const transitionOverlay = document.getElementById('transition-overlay');
         
+        // --- [เพิ่ม] Element สำหรับ Modal และ Audio ---
+        const startModal = document.getElementById('start-modal');
+        const startThoughtButton = document.getElementById('start-thought-button');
+        const bgMusic = document.getElementById('background-music');
+        // --- [สิ้นสุดส่วนที่เพิ่ม] ---
+
         // Thought View Elements
         const thoughtView = document.getElementById('thought-view');
         const thoughtText = document.getElementById('thought-text');
@@ -446,14 +463,12 @@
                 clearTimeout(typewriterTimeout);
             }
             
-            // --- [โค้ดที่เพิ่ม] ---
-            // หยุดเพลงเมื่อเปลี่ยนหน้า
-            const bgMusic = document.getElementById('background-music');
+            // --- [แก้ไข] หยุดเพลงเมื่อเปลี่ยนหน้า ---
             if (bgMusic) {
                 bgMusic.pause();
                 bgMusic.currentTime = 0; // รีเซ็ตเพลง (เผื่อกลับมาหน้านี้อีก)
             }
-            // --- [สิ้นสุดโค้ดที่เพิ่ม] ---
+            // --- [สิ้นสุดการแก้ไข] ---
 
             transitionToView('index.html');
         }
@@ -473,37 +488,43 @@
             }
         });
 
-        window.addEventListener('load', () => {
-            transitionOverlay.style.opacity = '1';
-            
-            initializeThoughts();
-            isThinking = true;
+        // --- [เพิ่ม] Event Listener สำหรับปุ่มเริ่ม (iOS Fix) ---
+        startThoughtButton.addEventListener('click', () => {
+            // 1. ซ่อน Modal
+            startModal.style.opacity = '0';
+            startModal.style.pointerEvents = 'none';
 
-            // --- [โค้ดที่เพิ่ม] ---
-            // เริ่มเล่นเพลงและตั้งค่าความดัง
-            const bgMusic = document.getElementById('background-music');
+            // 2. เริ่มเล่นเพลง (นี่คือ user interaction ที่ iOS ต้องการ)
             if (bgMusic) {
                 bgMusic.volume = 0.6; // ตั้งค่าความดัง 60%
-                
-                // พยายามเล่นเพลง
-                // เบราว์เซอร์สมัยใหม่มักจะบล็อก autoplay
-                // แต่ถ้าผู้ใช้เพิ่งกดมาจากหน้าอื่น (เช่น index.html) มักจะได้รับอนุญาต
                 const playPromise = bgMusic.play();
                 
                 if (playPromise !== undefined) {
                     playPromise.catch(error => {
                         console.warn("Autoplay ถูกบล็อกโดยเบราว์เซอร์:", error);
-                        // ถ้าถูกบล็อกจริงๆ ผู้ใช้จะต้องกดอะไรสักอย่างก่อน
-                        // แต่หน้านี้เป็นอัตโนมัติ
                     });
                 }
             }
-            // --- [สิ้นสุดโค้ดที่เพิ่ม] ---
 
+            // 3. เริ่มลำดับความคิด
+            initializeThoughts();
+            isThinking = true;
+        });
+        // --- [สิ้นสุดส่วนที่เพิ่ม] ---
+
+        // --- [แก้ไข] แก้ไข window.onload ---
+        window.addEventListener('load', () => {
+            transitionOverlay.style.opacity = '1';
+            
+            // ❌ เราจะไม่เริ่มเล่นเพลง หรือ เริ่มแอนิเมชัน ตรงนี้อีกต่อไป
+            // ❌ (ย้ายโค้ดไปไว้ใน startThoughtButton.addEventListener)
+
+            // ทำให้หน้าจอดำจางหายไป (เพื่อโชว์ปุ่ม "กดเพื่ออ่าน")
             setTimeout(() => {
                 transitionOverlay.style.opacity = '0';
             }, 100); 
         });
+        // --- [สิ้นสุดการแก้ไข] ---
     </script>
 
 </body>
